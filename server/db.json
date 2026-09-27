@@ -1,0 +1,19 @@
+{
+    "authors": [
+        {
+            "id": "1",
+            "name": "نجيب محفوظ",
+            "nationality": "مصر"
+        }
+    ],
+    "books": [
+        {
+            "id": "101",
+            "title": "الثلاثية",
+            "authorId": "1",
+            "category": "روايات",
+            "available": true
+        }
+    ],
+    "borrows": []
+}
