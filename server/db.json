@@ -1,19 +1,25 @@
 {
-    "authors": [
-        {
-            "id": "1",
-            "name": "نجيب محفوظ",
-            "nationality": "مصر"
-        }
-    ],
-    "books": [
-        {
-            "id": "101",
-            "title": "الثلاثية",
-            "authorId": "1",
-            "category": "روايات",
-            "available": true
-        }
-    ],
-    "borrows": []
+  "authors": [
+    {
+      "id": "t_jV1GFkQCM",
+      "name": "Charly",
+      "nationality": "syria "
+    },
+    {
+      "name": "rami ",
+      "nationality": "USA",
+      "id": "ugcZJlevCOU"
+    }
+  ],
+  "books": [
+    {
+      "id": "101",
+      "title": "الثلاثية",
+      "authorId": null,
+      "category": "روايات",
+      "available": true
+    }
+  ],
+  "borrows": [],
+  "$schema": "./node_modules/json-server/schema.json"
 }

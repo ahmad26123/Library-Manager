@@ -1,5 +1,5 @@
 export class Athors {
-    constructor(id,name,nationality) {
+    constructor(name, nationality, id) {
         this.id = id;
         this.name = name;
         this.nationality = nationality;
