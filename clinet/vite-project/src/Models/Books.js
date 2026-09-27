@@ -1,5 +1,5 @@
 export class Books {
-    constructor(id, title, authorld, category, available = true) {
+    constructor(id, title, authorld, category, available=true) {
         this.id = id;
         this.title = title;
         this.authorld = authorld;

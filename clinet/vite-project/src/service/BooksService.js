@@ -2,7 +2,7 @@ import { BaiseApi } from "./BaiseApi";
 
 export class BooksService extends BaiseApi {
     constructor() {
-        super("http://localhost:3001/books");
+        super("http://localhost:3000/books");
     }
 
     updateAvilability = async (bookId, available) => {
