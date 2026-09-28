@@ -1,11 +1,6 @@
 {
   "authors": [
     {
-      "name": "rami ",
-      "nationality": "USA",
-      "id": "ugcZJlevCOU"
-    },
-    {
       "name": "Ammar",
       "nationality": "Syria",
       "id": "gL-TsEDleSg"
@@ -14,6 +9,16 @@
       "name": "jasm",
       "nationality": "japan",
       "id": "Hg9IWXVcGiI"
+    },
+    {
+      "name": "mahmode",
+      "nationality": "jorden",
+      "id": "U7KKjaXrC2k"
+    },
+    {
+      "name": "Ahmad",
+      "nationality": "China",
+      "id": "HER-oPvNkDc"
     }
   ],
   "books": [
@@ -25,13 +30,21 @@
       "available": true
     },
     {
-      "id": "bDfyYUzlieA",
-      "title": "one day",
-      "authorld": "ugcZJlevCOU",
-      "category": "Philosophy",
-      "available": true
+      "id": "BkM0IfYbVs0",
+      "title": "Learn JAVA ",
+      "authorld": "gL-TsEDleSg",
+      "category": "Technology",
+      "available": false
     }
   ],
-  "borrows": [],
+  "borrows": [
+    {
+      "id": "Q6iNZnDGFgY",
+      "bookId": "BkM0IfYbVs0",
+      "borrowerName": "ehsan",
+      "borrowData": "2026-09-28",
+      "retunDate": "2026-10-09"
+    }
+  ],
   "$schema": "./node_modules/json-server/schema.json"
 }

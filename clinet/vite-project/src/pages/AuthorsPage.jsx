@@ -1,13 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AthoseService } from "../service/AuthoesService";
 import { Athors } from "../Models/Authoes";
-
+import { useCrud } from "../Hooks/userCrud";
 const authorService = new AthoseService();
 
 const AuthorsPage = () => {
-  const [authors, setAuthors] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const {
+    data: authors,
+    loading,
+    error,
+    addItem: addAuthor,
+    updateItem: updateAuthor,
+    deleteItem: deleteAuthor,
+  } = useCrud(authorService);
 
   const [name, setName] = useState("");
   const [nationality, setNationality] = useState("");
@@ -16,58 +21,24 @@ const AuthorsPage = () => {
   const [editName, setEditName] = useState("");
   const [editNationality, setEditNationality] = useState("");
 
-  const fetchAuthors = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const data = await authorService.getAll();
-      setAuthors(data || []);
-    } catch (err) {
-      setError("Sorry, could not fetch authors: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const loadData = async () => {
-      await fetchAuthors();
-    };
-    loadData();
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!name.trim() || !nationality.trim()) {
       return alert("Please make sure all fields are filled.");
     }
 
-    try {
-      setLoading(true);
-      const newAuthor = new Athors(name, nationality);
-      await authorService.post(newAuthor);
+    const newAuthor = new Athors(name, nationality);
+    const isAdded = await addAuthor(newAuthor);
 
+    if (isAdded) {
       setName("");
       setNationality("");
-      await fetchAuthors();
-    } catch (err) {
-      setError("Failed to add author: " + err.message);
-      setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this author?")) return;
-
-    try {
-      setLoading(true);
-      await authorService.delete(id);
-      await fetchAuthors();
-    } catch (err) {
-      setError("Failed to delete author: " + err.message);
-      setLoading(false);
-    }
+    await deleteAuthor(id);
   };
 
   const handleStartEdit = (author) => {
@@ -87,16 +58,11 @@ const AuthorsPage = () => {
       return alert("Fields cannot be empty.");
     }
 
-    try {
-      setLoading(true);
-      const updatedAuthor = new Athors(editName, editNationality, id);
-      await authorService.update(id, updatedAuthor);
+    const updatedAuthor = new Athors(editName, editNationality, id);
+    const isUpdated = await updateAuthor(id, updatedAuthor);
 
+    if (isUpdated) {
       handleCancelEdit();
-      await fetchAuthors();
-    } catch (err) {
-      setError("Failed to update author: " + err.message);
-      setLoading(false);
     }
   };
 
@@ -130,9 +96,10 @@ const AuthorsPage = () => {
         </div>
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-lg shadow-md transition-colors duration-300 flex items-center justify-center whitespace-nowrap"
+          disabled={loading}
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-8 rounded-lg shadow-md transition-colors duration-300 flex items-center justify-center whitespace-nowrap disabled:bg-gray-400"
         >
-          ➕ Add Author
+          {loading ? "Processing..." : "➕ Add Author"}
         </button>
       </form>
 

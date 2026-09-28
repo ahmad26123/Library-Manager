@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BooksService } from "../service/BooksService";
 import { AthoseService } from "../service/AuthoesService";
 import { Books } from "../Models/Books";
+import { useCrud } from "../Hooks/userCrud";
 
 const bookService = new BooksService();
 const authorService = new AthoseService();
@@ -13,14 +14,24 @@ const CATEGORIES = [
   "Technology",
   "Novel",
   "Philosophy",
-  "Biography"
+  "Biography",
 ];
 
 const BooksPage = () => {
-  const [books, setBooks] = useState([]);
-  const [authors, setAuthors] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const {
+    data: books,
+    loading: booksLoading,
+    error: booksError,
+    addItem: addBook,
+    updateItem: updateBook,
+    deleteItem: deleteBook,
+  } = useCrud(bookService);
+
+  const {
+    data: authors,
+    loading: authorsLoading,
+    error: authorsError,
+  } = useCrud(authorService);
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
@@ -34,31 +45,6 @@ const BooksPage = () => {
   const [filterAuthorId, setFilterAuthorId] = useState("");
   const [filterCategory, setFilterCategory] = useState("");
 
-  const fetchData = async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const [booksData, authorsData] = await Promise.all([
-        bookService.getAll(),
-        authorService.getAll(),
-      ]);
-      setBooks(booksData || []);
-      setAuthors(authorsData || []);
-    } catch (err) {
-      setError("Failed to fetch data: " + err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    const loadData = async () => {
-      await fetchData();
-    };
-    loadData();
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -67,32 +53,19 @@ const BooksPage = () => {
       return;
     }
 
-    try {
-      setLoading(true);
-      const newBook = new Books(null, title, authorId, category, true);
-      await bookService.post(newBook);
+    const newBook = new Books(null, title, authorId, category, true);
+    const isAdded = await addBook(newBook);
 
+    if (isAdded) {
       setTitle("");
       setCategory("");
       setAuthorId("");
-      await fetchData();
-    } catch (err) {
-      setError("Failed to add book: " + err.message);
-      setLoading(false);
     }
   };
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this book?")) return;
-
-    try {
-      setLoading(true);
-      await bookService.delete(id);
-      await fetchData();
-    } catch (err) {
-      setError("Failed to delete book: " + err.message);
-      setLoading(false);
-    }
+    await deleteBook(id);
   };
 
   const handleStartEdit = (book) => {
@@ -114,29 +87,26 @@ const BooksPage = () => {
       return alert("Please fill in all required fields.");
     }
 
-    try {
-      setLoading(true);
-      const updatedBook = new Books(
-        book.id,
-        editTitle,
-        editAuthorId,
-        editCategory,
-        book.available ?? true
-      );
+    const updatedBook = new Books(
+      book.id,
+      editTitle,
+      editAuthorId,
+      editCategory,
+      book.available ?? true
+    );
 
-      await bookService.update(book.id, updatedBook);
+    const isUpdated = await updateBook(book.id, updatedBook);
+    if (isUpdated) {
       handleCancelEdit();
-      await fetchData();
-    } catch (err) {
-      setError("Failed to update book: " + err.message);
-      setLoading(false);
     }
   };
 
   const filteredBooks = books.filter((book) => {
     const bAuthorId = book.authorld || book.authorId;
-    const matchesAuthor = filterAuthorId === "" || String(bAuthorId) === String(filterAuthorId);
-    const matchesCategory = filterCategory === "" || book.category === filterCategory;
+    const matchesAuthor =
+      filterAuthorId === "" || String(bAuthorId) === String(filterAuthorId);
+    const matchesCategory =
+      filterCategory === "" || book.category === filterCategory;
     return matchesAuthor && matchesCategory;
   });
 
@@ -144,6 +114,9 @@ const BooksPage = () => {
     const foundAuthor = authors.find((a) => String(a.id) === String(id));
     return foundAuthor ? foundAuthor.name : "Unknown Author";
   };
+
+  const isLoading = booksLoading || authorsLoading;
+  const error = booksError || authorsError;
 
   return (
     <div className="max-w-6xl mx-auto p-6 mt-8 bg-white shadow-xl rounded-2xl">
@@ -194,10 +167,10 @@ const BooksPage = () => {
 
         <button
           type="submit"
-          disabled={loading}
-          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition-colors"
+          disabled={isLoading}
+          className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-lg shadow transition-colors disabled:bg-gray-400"
         >
-          {loading ? "Processing..." : "➕ Add Book"}
+          {isLoading ? "Processing..." : "➕ Add Book"}
         </button>
       </form>
 
@@ -243,14 +216,14 @@ const BooksPage = () => {
         )}
       </div>
 
-      {loading && (
+      {isLoading && (
         <div className="text-center py-4 text-blue-600 font-medium">Loading books...</div>
       )}
       {error && (
         <div className="p-4 bg-red-50 text-red-700 border-l-4 border-red-500 mb-6">{error}</div>
       )}
 
-      {!loading && !error && (
+      {!isLoading && !error && (
         <div className="overflow-x-auto bg-white rounded-xl shadow border border-gray-200">
           <table className="min-w-full text-sm">
             <thead>
@@ -316,8 +289,8 @@ const BooksPage = () => {
                         <td className="py-3 px-4 text-center">
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-bold ${book.available
-                                ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-700"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-red-100 text-red-700"
                               }`}
                           >
                             {book.available ? "Available" : "Borrowed"}
@@ -352,8 +325,8 @@ const BooksPage = () => {
                         <td className="py-3 px-4 text-center">
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-bold ${book.available
-                                ? "bg-green-100 text-green-700"
-                                : "bg-red-100 text-red-700"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-red-100 text-red-700"
                               }`}
                           >
                             {book.available ? "Available" : "Borrowed"}
