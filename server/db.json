@@ -35,6 +35,13 @@
       "authorld": "gL-TsEDleSg",
       "category": "Technology",
       "available": false
+    },
+    {
+      "id": "EPeN7851U10",
+      "title": "tset",
+      "authorld": "U7KKjaXrC2k",
+      "category": "Science",
+      "available": true
     }
   ],
   "borrows": [
@@ -43,7 +50,8 @@
       "bookId": "BkM0IfYbVs0",
       "borrowerName": "ehsan",
       "borrowData": "2026-09-28",
-      "retunDate": "2026-10-09"
+      "retunDate": "2026-10-07",
+      "borrowername": "ehsan"
     }
   ],
   "$schema": "./node_modules/json-server/schema.json"

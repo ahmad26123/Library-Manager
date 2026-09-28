@@ -1,6 +1,4 @@
-// import { useState } from "react";
 import { AthoseService } from "../service/AuthoesService";
-// import { Athors } from "../Models/Authoes";
 import { useCrud } from "../Hooks/userCrud";
 import AuthorForm from "../components/authors/AuthorForm";
 import AuthorTable from "../components/authors/AuthorTable";
