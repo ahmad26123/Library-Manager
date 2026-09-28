@@ -1,14 +1,15 @@
 import { useState } from "react";
 import { Athors } from "../../Models/Authoes";
-const AuthorTable = ({ authors, onDeleteAuthor, onUpdateAuthor, loading, error }) => {
+// const AuthorTable = ({ authors, onDeleteAuthor, onUpdateAuthor, loading, error }) => {
+const AuthorTable = ({ authors, onUpdateAuthor, loading, error }) => {
     const [editingAuthorId, setEditingAuthorId] = useState(null);
     const [editName, setEditName] = useState("");
     const [editNationality, setEditNationality] = useState("");
 
-    const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this author?")) return;
-        await onDeleteAuthor(id);
-    };
+    // const handleDelete = async (id) => {
+    //     if (!window.confirm("Are you sure you want to delete this author?")) return;
+    //     await onDeleteAuthor(id);
+    // };
 
     const handleStartEdit = (author) => {
         setEditingAuthorId(author.id);
@@ -131,12 +132,12 @@ const AuthorTable = ({ authors, onDeleteAuthor, onUpdateAuthor, loading, error }
                                             >
                                                 Edit
                                             </button>
-                                            <button
+                                                {/* <button
                                                 onClick={() => handleDelete(author.id)}
                                                 className="bg-red-100 text-red-600 hover:bg-red-500 hover:text-white transition-all duration-200 py-1.5 px-3 rounded-lg text-xs font-semibold shadow-sm"
                                             >
                                                 Delete
-                                            </button>
+                                            </button> */}
                                         </td>
                                     </>
                                 )}

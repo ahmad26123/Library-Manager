@@ -23,6 +23,18 @@ const BooksTable = ({
         await onDeleteBook(id);
     };
 
+    // const handleDelete = async (book) => {
+    //     if (!window.confirm("Are you sure you want to set this book as unavailable?")) return;
+
+    //     const updatedBook = {
+    //         ...book,
+    //         available: false,
+    //     };
+
+    //     await onUpdateBook(book.id, updatedBook);
+    // };
+    // خطة مستقبلية : تعديل وضع الستات من ترو و فولس الى قائمة من الخيارات المحددة بحيث يصبح لدي كتلب متوفر و كتاب مستعار و كتل غير متوفر بدل من حذفه نهائيا 
+
     const handleStartEdit = (book) => {
         setEditingBookId(book.id);
         setEditTitle(book.title || "");
@@ -248,7 +260,9 @@ const BooksTable = ({
                                                         Edit
                                                     </button>
                                                     <button
-                                                        onClick={() => handleDelete(book.id)}
+                                                            onClick={() => handleDelete(book.id)}
+                                                            // onClick={() => handleDelete(book)}
+
                                                         className="bg-red-100 text-red-600 hover:bg-red-500 hover:text-white px-3 py-1 rounded text-xs font-semibold transition"
                                                     >
                                                         Delete
